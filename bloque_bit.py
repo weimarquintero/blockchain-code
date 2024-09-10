@@ -1,14 +1,13 @@
 #importaciones de la clase
 from hashlib import *
 from transaccion import Transaccion
-from wallet import Wallet
 import random
 
 #funcion que cacula el hash de un dato
 def hash_Sha256(data):
     return sha256(data.encode('utf-8')).hexdigest()
 
-#clase Bloque que tiene como Inputs: Hash previo, transacciones.
+#clase Bloque que tiene como Inputs: Hash previo, las transacciones se van adicionando despues.
 class Bloque:  
     def __init__(self, hash_previo):
         self.hash_bloque = ""
@@ -16,36 +15,43 @@ class Bloque:
         self.nonce = ""
         self.hash_raiz = ""
         self.transacciones = []
+        self.data_tx = []
     
-    #adicionar transacciones
+    #adicionar transacciones, depende de la aprobacion de las mismas: se validan que las entradas sean UTXO y que dentro de la transaccion sus entradas sean iguales a sus salidas
     def adicionar_transacciones(self, tx):
         for t in tx:
             transaccion = Transaccion()
             transaccion = t
             transaccion.validar_transaccion()
             if(transaccion.valida):
-                self.transacciones.append(transaccion.retornar_info())
+                if self.aprobar_transaccion(transaccion):
+                    self.data_tx.append(transaccion.retornar_info())
+                    self.transacciones.append(transaccion)
     
+    #Aprobacion de transacciones
     def aprobar_transaccion(self, t):
         verificadas,utxo_entradas = 0,0
         transaccion = Transaccion()
         transaccion = t
         for e in transaccion.entradas:
-            utxo_entradas += 1
             for tx in self.transacciones:
-                for s in Transaccion(tx).salidas:
+                transaccion2 = Transaccion
+                transaccion2 = tx
+                for s in transaccion2.salidas:
                     if(e == s):
                         verificadas += 1
+            utxo_entradas += 1
         if(verificadas == utxo_entradas):
+            t.aprobar_transaccion()
             return True
         else:
             return False
         
     #se retorna la informacion del bloque    
     def retornar_bloque(self):
-        return f'Hash del bloque: {self.hash_bloque}.\nHash Previo: {self.hash_previo}.\nNonce: {self.nonce}.\nHash Raiz: {self.hash_raiz}.\nTransacciones: {self.transacciones}.'
+        return f'Hash del bloque: {self.hash_bloque}.\nHash Previo: {self.hash_previo}.\nNonce: {self.nonce}.\nHash Raiz: {self.hash_raiz}.\nTransacciones: {self.data_tx}.'
     
-    #se retorna la informacion del bloque    
+    #se retorna solo la data del bloque    
     def data_bloque(self):
         return f'{self.hash_bloque}{self.hash_previo}{self.nonce}{self.hash_raiz}{self.transacciones}'
     
@@ -53,7 +59,7 @@ class Bloque:
     def crear_arbol(self):
         nivel = 1
         hojas = []
-        for tx in self.transacciones:
+        for tx in self.data_tx:
             hojas.append(hash_Sha256(tx))
         while(len(hojas)>1):
             hojas_up = []
@@ -97,8 +103,19 @@ transaccion2 = Transaccion()
 transaccion2.adicionar_entrada(manuel)
 transaccion2.adicionar_salida(["Andres",50])
 transaccion2.adicionar_salida(["Manuel",50])
-transaccion2.crear_id() 
+transaccion2.crear_id()
+ 
 bloque1 = Bloque("hashPrevio001")
+t0 = Transaccion()
+t0.adicionar_entrada(["Weimar",100])
+t0.adicionar_salida(["Weimar",100])
+t1 = Transaccion()
+t1.adicionar_entrada(["Manuel",100])
+t1.adicionar_salida(["Manuel",100])
+bloque1.data_tx.append(t0.retornar_info())
+bloque1.transacciones.append(t0)  
+bloque1.data_tx.append(t1.retornar_info())
+bloque1.transacciones.append(t1)
 bloque1.adicionar_transacciones([transaccion1,transaccion2])
 bloque1.crear_bloque(2)
 print(bloque1.retornar_bloque())

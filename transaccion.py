@@ -13,13 +13,16 @@ class Transaccion:
         self.aprobada = False
         self.entradas = []
         self.salidas = []
-        
+    
+    #adicionar entradas a la transaccion    
     def adicionar_entrada(self, entrada):
         self.entradas.append(entrada)
-        
+     
+     #adicionar salidas a la transaccion   
     def adicionar_salida(self, salida):
         self.salidas.append(salida)
-        
+     
+    #Validar si las entradas suman lo mismo que las salidas    
     def validar_transaccion(self):
         suma_entradas = 0
         suma_salidas = 0
@@ -31,12 +34,18 @@ class Transaccion:
             self.valida = True
         return self.valida
     
+    #retornar la data de la transaccion
     def retornar_data(self):
         return f'{self.valida}{self.aprobada}{self.entradas}{self.salidas}'
     
-    #se retorna la informacion del bloque    
+    #se retorna la informacion de la transaccion    
     def retornar_info(self):
         return f'ID: {self.id}. Validada: {self.valida}. Aprobada: {self.aprobada}. Entradas: {self.entradas}. Salidas: {self.salidas}.'
     
+    #Creando el ID de la transaccion - Hash de la misma
     def crear_id(self):
         self.id = hash_Sha256(self.retornar_data())
+    
+    #aprobando la transaccion    
+    def aprobar_transaccion(self):
+        self.aprobada = True

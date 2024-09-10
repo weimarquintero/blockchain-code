@@ -10,6 +10,7 @@ class Wallet:
     def __init__(self, id, balance):
         self.clave_publica = hash_Sha256(id)
         self.balance = balance
-
+        
+    #retornando la Wallet
     def retornar_wallet(self):
         return (self.clave_publica,self.balance)
