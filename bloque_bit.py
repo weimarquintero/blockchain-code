@@ -87,38 +87,14 @@ class Bloque:
             self.hash_bloque = hash_Sha256(self.data_bloque())
             if(str(self.hash_bloque).startswith(cadena_ceros)):
                 validador = False
-        
-
-#probando la clase bloque
-weimar = ["Weimar",100]
-pedro = ["Pedro",100]
-manuel = ["Manuel",100]
-andres = ["Andres",100]
-transaccion1 = Transaccion()
-transaccion1.adicionar_entrada(weimar)
-transaccion1.adicionar_salida(["Pedro",20])
-transaccion1.adicionar_salida(["Weimar",80])
-transaccion1.crear_id()
-transaccion2 = Transaccion()
-transaccion2.adicionar_entrada(manuel)
-transaccion2.adicionar_salida(["Andres",50])
-transaccion2.adicionar_salida(["Manuel",50])
-transaccion2.crear_id()
- 
-bloque1 = Bloque("hashPrevio001")
-t0 = Transaccion()
-t0.adicionar_entrada(["Weimar",100])
-t0.adicionar_salida(["Weimar",100])
-t1 = Transaccion()
-t1.adicionar_entrada(["Manuel",100])
-t1.adicionar_salida(["Manuel",100])
-bloque1.data_tx.append(t0.retornar_info())
-bloque1.transacciones.append(t0)  
-bloque1.data_tx.append(t1.retornar_info())
-bloque1.transacciones.append(t1)
-bloque1.adicionar_transacciones([transaccion1,transaccion2])
-bloque1.crear_bloque(2)
-print(bloque1.retornar_bloque())
+    
+    #retonar hash del bloque
+    def retornar_hash(self):
+        return self.hash_bloque
+    
+    #concatenar con otro bloque
+    def concatenar(self, hash_prev):
+        self.hash_previo(hash_prev)
 
 
     
